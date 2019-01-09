@@ -1,0 +1,8 @@
+module.exports = [
+    {
+        symbol: 'EOS',
+        contract: 'eosio.token',
+        decimals: null,
+        notify: null
+    }
+]
