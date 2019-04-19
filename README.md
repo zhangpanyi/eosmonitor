@@ -16,6 +16,7 @@ node index.js
 ```
 docker volume create eosmonitor-logs-data-volume
 docker-compose build
+docker-compose up
 ```
 
 ## 2. 配置文件
