@@ -1,0 +1,23 @@
+version: "3.0"
+  
+services:
+  eosmonitor:
+    image: eosmonitor
+    build:
+      context: .
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 10m
+    container_name: eosmonitor
+    expose:
+      - 18888
+    ports:
+      - 18888:18888
+    volumes:
+      - eosmonitor-logs-data-volume:/eosmonitor/logs
+
+volumes:
+  eosmonitor-logs-data-volume:
+    external: true

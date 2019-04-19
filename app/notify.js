@@ -1,5 +1,5 @@
-const request = require('request')
-const logger = require('./logger')
+const request = require('request');
+const logger = require('./logger');
 
 module.exports = function() {
     let symbol      = '';

@@ -12,6 +12,12 @@ npm install
 node index.js
 ```
 
+### Docker
+```
+docker volume create eosmonitor-logs-data-volume
+docker-compose build
+```
+
 ## 2. 配置文件
 由于工程中只有配置模板，第一次启动服务前必须执行 `node init_config.js` 命令，用于自动生成配置文件，然后酌情修改。
 

@@ -1,7 +1,7 @@
-const utils = require('../utils')
-const logger = require('../logger')
-const future = require('../future')
-const validator = require('validator')
+const utils = require('../utils');
+const logger = require('../logger');
+const future = require('../future');
+const validator = require('validator');
 
 module.exports = async function(eos, request, callback) {
     const rule = [

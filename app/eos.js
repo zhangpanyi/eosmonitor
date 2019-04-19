@@ -1,14 +1,15 @@
-const fs = require('fs')
-const eos = require('eosjs')
-const utils = require('./utils')
-const future = require('./future')
-const BigNumber = require('bignumber.js')
-const server = require('../config/server')
-const tokens = require('../config/tokens')
+const fs = require('fs');
+const eos = require('eosjs');
+const utils = require('./utils');
+const future = require('./future');
+const BigNumber = require('bignumber.js');
+const server = require('../config/server');
+const tokens = require('../config/tokens');
 
 class EOS {
     constructor() {
         this.rpc = eos({
+            debug: true,
             httpEndpoint:       server.endpoint,
             verbose:            false,
             expireInSeconds:    60,

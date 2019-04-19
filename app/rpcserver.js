@@ -1,12 +1,12 @@
-const logger = require('./logger')
-const rpc = require('node-json-rpc2')
-const server = require('../config/server')
+const logger = require('./logger');
+const rpc = require('node-json-rpc2');
+const srvcfg = require('../config/server');
 
 class RPCServer {
     constructor(eos){
         this.eos = eos;
         let self = this;
-        this._server = new rpc.Server(server);
+        this._server = new rpc.Server(srvcfg);
         const buyraw = require('./handlers/buyraw');
         this._server.addMethod('buyRaw', function(request, callback) {
             buyraw(self.eos, request, callback);

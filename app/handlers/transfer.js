@@ -1,8 +1,8 @@
-const utils = require('../utils')
-const logger = require('../logger')
-const future = require('../future')
-const validator = require('validator')
-const server = require('../../config/server')
+const utils = require('../utils');
+const logger = require('../logger');
+const future = require('../future');
+const validator = require('validator');
+const srvcfg = require('../../config/server');
 
 module.exports = async function(eos, request, callback) {
     const rule = [
@@ -52,6 +52,12 @@ module.exports = async function(eos, request, callback) {
         }
     ];
     if (!utils.validationParams(request, rule, callback)) {
+        return;
+    }
+
+    if (rule[1].value === srvcfg.account) {
+        let error = {code: -32602, message: "can't transfer money to oneself"};
+        callback(error, undefined);
         return;
     }
 

@@ -1,6 +1,6 @@
-const utils = require('../utils')
-const logger = require('../logger')
-const future = require('../future')
+const utils = require('../utils');
+const logger = require('../logger');
+const future = require('../future');
 
 module.exports = async function(eos, request, callback) {
     const rule = [

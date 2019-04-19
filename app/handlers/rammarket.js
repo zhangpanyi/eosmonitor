@@ -1,5 +1,5 @@
-const utils = require('../utils')
-const future = require('../future')
+const utils = require('../utils');
+const future = require('../future');
 
 module.exports = async function(eos, request, callback) {
     let error, result;

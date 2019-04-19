@@ -1,4 +1,4 @@
-const log4js = require('log4js')
+const log4js = require('log4js');
 
 log4js.configure({
     appenders: {
@@ -15,7 +15,7 @@ log4js.configure({
         },
         filter: {
             type: 'logLevelFilter',
-            level: log4js.levels.WARN,
+            level: log4js.levels.INFO,
             appender: 'file'
         }
     },
@@ -26,6 +26,6 @@ log4js.configure({
         }
     },
     replaceConsole: true
-})
+});
 
 module.exports = log4js.getLogger();

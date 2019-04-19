@@ -1,10 +1,10 @@
-const sleep = require('./sleep')
-const utils = require('./utils')
-const future = require('./future')
-const Notify = require('./notify')
-const logger = require('./logger')
-const seqstat = require('./seqstat')
-const server = require('../config/server')
+const sleep = require('./sleep');
+const utils = require('./utils');
+const future = require('./future');
+const Notify = require('./notify');
+const logger = require('./logger');
+const seqstat = require('./seqstat');
+const srvcfg = require('../config/server');
 
 class Poller {
     constructor(eos) {
@@ -31,9 +31,9 @@ class Poller {
         // 获取actions
         let error, result;
         [error, result] = await future(
-            this.eos.rpc.getActions(server.account, offset, limit));
+            this.eos.rpc.getActions(srvcfg.account, offset, limit));
         if (error != null) {
-            logger.info('Failed to get actions, %s, %s', server.account, error.message);
+            logger.info('Failed to get actions, %s, %s', srvcfg.account, error.message);
             return 0;
         }
 
@@ -55,19 +55,19 @@ class Poller {
             if (act.name != 'transfer') {
                 continue;
             }
-            if (receipt.receiver != server.account) {
+            if (receipt.receiver != srvcfg.account) {
                 continue;
             }
 
             let currency = utils.parseCurrency(act.data.quantity);
             let token = await this.eos.getToken(currency.symbol);
-            if (token == null) {
+            if (token == null || act.account !== token.contract) {
                 continue;
             }
             if (act.account != token.contract) {
                 continue;
             }
-            if (act.data.to != server.account) {
+            if (act.data.to != srvcfg.account) {
                 continue;
             }
 

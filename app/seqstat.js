@@ -1,5 +1,5 @@
-const fs = require('fs')
-const ini = require('ini')
+const fs = require('fs');
+const ini = require('ini');
 
 module.exports = {
     filename: 'seqstat.ini',

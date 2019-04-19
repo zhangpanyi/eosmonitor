@@ -1,6 +1,6 @@
-let EOS = require('./app/eos')
-let Poller = require('./app/poller')
-let RPCServer = require('./app/rpcserver')
+let EOS = require('./app/eos');
+let Poller = require('./app/poller');
+let RPCServer = require('./app/rpcserver');
 
 async function main() {
     let eos = new EOS();

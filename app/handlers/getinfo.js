@@ -1,4 +1,4 @@
-const future = require('../future')
+const future = require('../future');
 
 module.exports = async function(eos, request, callback) {
     let error, info;

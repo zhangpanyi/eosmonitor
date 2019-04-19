@@ -1,4 +1,4 @@
-const BigNumber = require('bignumber.js')
+const BigNumber = require('bignumber.js');
 
 module.exports = {
     // 解析货币信息
@@ -67,13 +67,10 @@ module.exports = {
 
     // 验证账号名
     validateAccountName: function(value) {
-        if (value.length !== 12) {
-            return false;
-        }
-
         for (let i = 0; i < value.length; i++) {
             let ch = value[i];
             if (
+                ch !== '.' &&
                 !(ch >= '0' && ch <= '5') &&
                 !(ch >= 'a' && ch <= 'z')
             ) {
