@@ -106,19 +106,26 @@ class EOS {
             throw error;
         }
 
-        let netWeight = info.self_delegated_bandwidth.net_weight;
-        let cpuWeight = info.self_delegated_bandwidth.cpu_weight;
         let accountInfo = {
             account: account,
+            balance: '0',
+            net_weight: '0',
+            cpu_weight: '0',
             net_limit: info.net_limit,
             cpu_limit: info.cpu_limit,
             ram_usage: info.ram_usage,
             ram_bytes: info.total_resources.ram_bytes,
-            net_weight: utils.parseCurrency(netWeight).amount,
-            cpu_weight: utils.parseCurrency(cpuWeight).amount,
-            balance: utils.parseCurrency(info.core_liquid_balance).amount,
             created: info.created
         };
+        if (info.core_liquid_balance) {
+            accountInfo.balance = utils.parseCurrency(info.core_liquid_balance).amount;
+        }
+        if (info.self_delegated_bandwidth) {
+            let netWeight = info.self_delegated_bandwidth.net_weight;
+            let cpuWeight = info.self_delegated_bandwidth.cpu_weight;
+            accountInfo.net_weight = utils.parseCurrency(netWeight).amount;
+            accountInfo.cpu_weight = utils.parseCurrency(cpuWeight).amount;
+        }
         return accountInfo;
     }
 
