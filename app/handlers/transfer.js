@@ -68,7 +68,7 @@ module.exports = async function(eos, request, callback) {
     if (error != null) {
         logger.warn('Failed to transfer, symbol: %s, to: %s, amount: %s, memo: %s, %s',
             rule[0].value, rule[1].value, rule[2].value, rule[3].value, error.message);
-        callback(error, undefined);
+        callback({code: -32603, message: error.message}, undefined);
         return;
     }
     logger.warn('Transfer success, symbol: %s, to: %s, amount: %s, memo: %s, txid: %s',

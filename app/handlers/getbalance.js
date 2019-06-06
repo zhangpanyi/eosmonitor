@@ -34,7 +34,7 @@ module.exports = async function(eos, request, callback) {
     let error, balance;
     [error, balance] = await future(eos.getBalance(rule[0].value, rule[1].value));
     if (error != null) {
-        callback(error, undefined);
+        callback({code: -32603, message: error.message}, undefined);
         return;
     }
     callback(undefined, balance);

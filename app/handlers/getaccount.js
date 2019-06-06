@@ -23,7 +23,8 @@ module.exports = async function(eos, request, callback) {
     let error, account;
     [error, account] = await future(eos.getAccount(rule[0].value));
     if (error != null) {
-        callback(error, undefined);
+        callback({code: -32603, message: error.message}, undefined);
+        return;
     }
     callback(undefined, account);
 }

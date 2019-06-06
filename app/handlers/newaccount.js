@@ -83,7 +83,7 @@ module.exports = async function(eos, request, callback) {
     if (error != null) {
         logger.warn('Failed to new account, account: %s, %s',
             rule[0].value, error.message);
-        callback(error, undefined);
+        callback({code: -32603, message: error.message}, undefined);
         return;
     }
     logger.warn('New account, account: %s, txid: %s', rule[0].value, txid);

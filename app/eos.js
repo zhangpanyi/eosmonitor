@@ -9,7 +9,7 @@ const tokens = require('../config/tokens');
 class EOS {
     constructor() {
         this.rpc = eos({
-            debug: true,
+            debug:              false,
             httpEndpoint:       server.endpoint,
             verbose:            false,
             expireInSeconds:    60,
