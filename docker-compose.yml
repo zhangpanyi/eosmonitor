@@ -16,8 +16,11 @@ services:
     ports:
       - 18888:18888
     volumes:
-      - eosmonitor-logs-data-volume:/eosmonitor/logs
+      - eosmonitor-data-volume:/eosmonitor/db
+      - eosmonitor-data-volume:/eosmonitor/logs
+      - ./config/server.js:/eosmonitor/config/server.js
+      - ./config/tokens.js:/eosmonitor/config/tokens.js
 
 volumes:
-  eosmonitor-logs-data-volume:
+  eosmonitor-data-volume:
     external: true

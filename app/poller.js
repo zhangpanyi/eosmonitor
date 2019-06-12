@@ -3,7 +3,7 @@ const utils = require('./utils');
 const future = require('./future');
 const Notify = require('./notify');
 const logger = require('./logger');
-const seqstat = require('./seqstat');
+const latest = require('./latest');
 const srvcfg = require('../config/server');
 
 class Poller {
@@ -14,15 +14,15 @@ class Poller {
     // 开始轮询
     async startPoll() {
         const limit = 100;
-        let seq = seqstat.getSeq();
+        let seq = latest.getSeq();
         while (true) {
             let count = await this._pollActions(seq, limit);
             let newseq = seq + count;
             if (newseq > seq) {
                 seq = newseq;
-                seqstat.updateSeq(newseq);
+                latest.updateSeq(newseq);
             }  
-            await sleep(1000*10);
+            await sleep(1000 * 10);
         }
     }
 
