@@ -1,6 +1,6 @@
 const utils = require('../utils');
 const logger = require('../logger');
-const future = require('../future');
+const nothrow = require('../nothrow');
 const validator = require('validator');
 
 module.exports = async function(eos, request, callback) {
@@ -56,7 +56,7 @@ module.exports = async function(eos, request, callback) {
     }
 
     let error, txid
-    [error, txid] = await future(eos.issueToken(
+    [error, txid] = await nothrow(eos.issueToken(
         rule[0].value, rule[1].value, rule[2].value, rule[3].value));
     if (error != null) {
         logger.warn('Failed to issue token, issuer: %s, symbol: %s, decimals: %s, maxSupply: %s, %s',

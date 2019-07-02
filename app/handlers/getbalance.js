@@ -1,5 +1,5 @@
 const utils = require('../utils');
-const future = require('../future');
+const nothrow = require('../nothrow');
 const server = require('../../config/server');
 
 module.exports = async function(eos, request, callback) {
@@ -32,7 +32,7 @@ module.exports = async function(eos, request, callback) {
     }
 
     let error, balance;
-    [error, balance] = await future(eos.getBalance(rule[0].value, rule[1].value));
+    [error, balance] = await nothrow(eos.getBalance(rule[0].value, rule[1].value));
     if (error != null) {
         callback({code: -32603, message: error.message}, undefined);
         return;

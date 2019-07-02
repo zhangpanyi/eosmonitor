@@ -1,6 +1,6 @@
 const sleep = require('./sleep');
 const utils = require('./utils');
-const future = require('./future');
+const nothrow = require('./nothrow');
 const Notify = require('./notify');
 const logger = require('./logger');
 const latest = require('./latest');
@@ -30,7 +30,7 @@ class Poller {
     async _pollActions(offset, limit) {
         // 获取actions
         let error, result;
-        [error, result] = await future(
+        [error, result] = await nothrow(
             this.eos.rpc.getActions(srvcfg.account, offset, limit));
         if (error != null) {
             logger.info('Failed to get actions, %s, %s', srvcfg.account, error.message);

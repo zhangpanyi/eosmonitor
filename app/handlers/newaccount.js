@@ -1,6 +1,6 @@
 const utils = require('../utils');
 const logger = require('../logger');
-const future = require('../future');
+const nothrow = require('../nothrow');
 const validator = require('validator');
 
 module.exports = async function(eos, request, callback) {
@@ -77,7 +77,7 @@ module.exports = async function(eos, request, callback) {
     }
 
     let error, txid;
-    [error, txid] = await future(eos.newAccount(
+    [error, txid] = await nothrow(eos.newAccount(
         rule[0].value, rule[1].value, rule[2].value,
         rule[3].value, rule[4].value, rule[5].value));
     if (error != null) {

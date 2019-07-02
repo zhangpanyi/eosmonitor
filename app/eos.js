@@ -1,7 +1,7 @@
 const fs = require('fs');
 const eos = require('eosjs');
 const utils = require('./utils');
-const future = require('./future');
+const nothrow = require('./nothrow');
 const BigNumber = require('bignumber.js');
 const server = require('../config/server');
 const tokens = require('../config/tokens');
@@ -39,7 +39,7 @@ class EOS {
         }
 
         let error, stats;
-        [error, stats] = await future(
+        [error, stats] = await nothrow(
             this.rpc.getCurrencyStats(token.contract, symbol));
         if (error != null) {
             return null;
@@ -54,7 +54,7 @@ class EOS {
     // 购买内存
     async buyRaw(receiver, ramBytes) {
         let error, result;
-        [error, result] = await future(this.rpc.buyrambytes({
+        [error, result] = await nothrow(this.rpc.buyrambytes({
             payer: server.account,
             receiver: receiver,
             bytes: ramBytes
@@ -70,7 +70,7 @@ class EOS {
         let error, result;
         let abi = fs.readFileSync(`contracts/eosio.token/eosio.token.abi`);
         let wasm = fs.readFileSync(`contracts/eosio.token/eosio.token.wasm`);
-        [error, result] = await future(this.rpc.transaction(tr => {
+        [error, result] = await nothrow(this.rpc.transaction(tr => {
             tr.setcode(server.account, 0, 0, wasm);
             tr.setabi(server.account, JSON.parse(abi));
         }));
@@ -83,7 +83,7 @@ class EOS {
     // 内存市场
     async ramMarket() {
         let error, result;
-        [error, result] = await future(
+        [error, result] = await nothrow(
             this.rpc.getTableRows(true, 'eosio', 'eosio', 'rammarket'));
         if (error != null) {
             throw error;
@@ -101,7 +101,7 @@ class EOS {
     // 账号信息
     async getAccount(account) {
         let error, info;
-        [error, info] = await future(this.rpc.getAccount(account));
+        [error, info] = await nothrow(this.rpc.getAccount(account));
         if (error != null) {
             throw error;
         }
@@ -137,7 +137,7 @@ class EOS {
         }
 
         let error, balance;
-        [error, balance] = await future(
+        [error, balance] = await nothrow(
             this.rpc.getCurrencyBalance(token.contract, account, symbol));
         if (error != null) {
             throw error;
@@ -157,7 +157,7 @@ class EOS {
         }
 
         let error, contract, result;
-        [error, contract] = await future(this.rpc.contract(token.contract));
+        [error, contract] = await nothrow(this.rpc.contract(token.contract));
         if (error != null) {
             throw error;
         }
@@ -168,7 +168,7 @@ class EOS {
             authorization: server.account+'@active'
         }
         let quantity = utils.formatCurrency(amount, token.symbol, token.decimals);
-        [error, result] = await future(contract.transfer({
+        [error, result] = await nothrow(contract.transfer({
             from:       server.account,
             to:         to,
             quantity:   quantity,
@@ -184,7 +184,7 @@ class EOS {
     async issueToken(issuer, symbol, decimals, maxSupply) {
         let error, result;
         let currency = utils.formatCurrency(maxSupply, symbol, decimals);
-        [error, result] = await future(this.rpc.transaction({
+        [error, result] = await nothrow(this.rpc.transaction({
             actions: [
                 {
                     account: server.account,
@@ -222,7 +222,7 @@ class EOS {
     // 创建账号
     async newAccount(account, ownerKey, activeKey, rawBytes, cpu, net) {
         let error, result;
-        [error, result] = await future(this.rpc.transaction(tr => {
+        [error, result] = await nothrow(this.rpc.transaction(tr => {
             tr.newaccount({
                 creator: server.account,
                 name: account,
