@@ -1,7 +1,9 @@
+const validator = require('validator');
+
 const utils = require('../utils');
 const logger = require('../logger');
 const nothrow = require('../nothrow');
-const validator = require('validator');
+
 const srvcfg = require('../../config/server');
 
 module.exports = async function(eos, request, callback) {
@@ -63,7 +65,7 @@ module.exports = async function(eos, request, callback) {
 
     let error, txid;
     [error, txid] = await nothrow(
-        eos.transfer(rule[0].value, rule[1].value, rule[2].value, rule[3].value)
+        eos.asyncTransfer(rule[0].value, rule[1].value, rule[2].value, rule[3].value)
     )
     if (error != null) {
         logger.warn('Failed to transfer, symbol: %s, to: %s, amount: %s, memo: %s, %s',

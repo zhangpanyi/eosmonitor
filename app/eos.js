@@ -1,8 +1,10 @@
 const fs = require('fs');
 const eos = require('eosjs');
+const BigNumber = require('bignumber.js');
+
 const utils = require('./utils');
 const nothrow = require('./nothrow');
-const BigNumber = require('bignumber.js');
+
 const server = require('../config/server');
 const tokens = require('../config/tokens');
 
@@ -21,8 +23,41 @@ class EOS {
         this.tokens = new Map();
     }
 
-    // 代币信息
-    async getToken(symbol) {
+    // 部署代币
+    async asyncDeployToken() {
+        let error, result;
+        let abi = fs.readFileSync(`contracts/eosio.token/eosio.token.abi`);
+        let wasm = fs.readFileSync(`contracts/eosio.token/eosio.token.wasm`);
+        [error, result] = await nothrow(this.rpc.transaction(tr => {
+            tr.setcode(server.account, 0, 0, wasm);
+            tr.setabi(server.account, JSON.parse(abi));
+        }));
+        if (error != null) {
+            throw error;
+        }
+        return result.transaction_id;
+    }
+
+    // 内存市场
+    async asyncGetRamMarket() {
+        let error, result;
+        [error, result] = await nothrow(
+            this.rpc.getTableRows(true, 'eosio', 'eosio', 'rammarket'));
+        if (error != null) {
+            throw error;
+        }
+
+        let rammarket = result.rows[0];
+        let connectorWeight = BigNumber(rammarket.quote.weight);
+        let connectorBalance = BigNumber(utils.parseCurrency(rammarket.quote.balance).amount);
+        let outstandingSupply = BigNumber(utils.parseCurrency(rammarket.base.balance).amount);
+        let price = connectorBalance.dividedBy(outstandingSupply.multipliedBy(connectorWeight));
+        rammarket.price = price.toString(10);
+        return rammarket;
+    }
+
+    // 获取代币信息
+    async asyncGetToken(symbol) {
         if (this.tokens.has(symbol)) {
             return this.tokens.get(symbol);
         }
@@ -51,55 +86,8 @@ class EOS {
         return token;
     }
 
-    // 购买内存
-    async buyRaw(receiver, ramBytes) {
-        let error, result;
-        [error, result] = await nothrow(this.rpc.buyrambytes({
-            payer: server.account,
-            receiver: receiver,
-            bytes: ramBytes
-        }));
-        if (error != null) {
-            throw error;
-        }
-        return result.transaction_id;
-    }
-
-    // 部署代币
-    async deployToken() {
-        let error, result;
-        let abi = fs.readFileSync(`contracts/eosio.token/eosio.token.abi`);
-        let wasm = fs.readFileSync(`contracts/eosio.token/eosio.token.wasm`);
-        [error, result] = await nothrow(this.rpc.transaction(tr => {
-            tr.setcode(server.account, 0, 0, wasm);
-            tr.setabi(server.account, JSON.parse(abi));
-        }));
-        if (error != null) {
-            throw error;
-        }
-        return result.transaction_id;
-    }
-
-    // 内存市场
-    async ramMarket() {
-        let error, result;
-        [error, result] = await nothrow(
-            this.rpc.getTableRows(true, 'eosio', 'eosio', 'rammarket'));
-        if (error != null) {
-            throw error;
-        }
-
-        let rammarket = result.rows[0];
-        let connectorWeight = BigNumber(rammarket.quote.weight);
-        let connectorBalance = BigNumber(utils.parseCurrency(rammarket.quote.balance).amount);
-        let outstandingSupply = BigNumber(utils.parseCurrency(rammarket.base.balance).amount);
-        let price = connectorBalance.dividedBy(outstandingSupply.multipliedBy(connectorWeight));
-        rammarket.price = price.toString(10);
-        return rammarket;
-    }
-
-    // 账号信息
-    async getAccount(account) {
+    // 获取账号信息
+    async asyncGetAccount(account) {
         let error, info;
         [error, info] = await nothrow(this.rpc.getAccount(account));
         if (error != null) {
@@ -129,9 +117,9 @@ class EOS {
         return accountInfo;
     }
 
-    // 代币余额
-    async getBalance(symbol, account) {
-        let token = await this.getToken(symbol);
+    // 获取代币余额
+    async asyncGetBalance(symbol, account) {
+        let token = await this.asyncGetToken(symbol);
         if (token == null) {
             throw new Error('symbol not found');
         }
@@ -149,9 +137,23 @@ class EOS {
         return amount;
     }
 
+    // 购买内存
+    async asyncBuyRaw(receiver, ramBytes) {
+        let error, result;
+        [error, result] = await nothrow(this.rpc.buyrambytes({
+            payer: server.account,
+            receiver: receiver,
+            bytes: ramBytes
+        }));
+        if (error != null) {
+            throw error;
+        }
+        return result.transaction_id;
+    }
+
     // 代币转账
-    async transfer(symbol, to, amount, memo) {
-        let token = await this.getToken(symbol);
+    async asyncTransfer(symbol, to, amount, memo) {
+        let token = await this.asyncGetToken(symbol);
         if (token == null) {
             throw new Error('symbol not found');
         }
@@ -181,7 +183,7 @@ class EOS {
     }
 
     // 发行代币
-    async issueToken(issuer, symbol, decimals, maxSupply) {
+    async asyncIssueToken(issuer, symbol, decimals, maxSupply) {
         let error, result;
         let currency = utils.formatCurrency(maxSupply, symbol, decimals);
         [error, result] = await nothrow(this.rpc.transaction({
@@ -220,7 +222,7 @@ class EOS {
     }
 
     // 创建账号
-    async newAccount(account, ownerKey, activeKey, rawBytes, cpu, net) {
+    async asyncNewAccount(account, ownerKey, activeKey, rawBytes, cpu, net) {
         let error, result;
         [error, result] = await nothrow(this.rpc.transaction(tr => {
             tr.newaccount({

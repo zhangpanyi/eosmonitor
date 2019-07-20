@@ -33,7 +33,7 @@ module.exports = async function(eos, request, callback) {
     }
 
     let error, txid;
-    [error, txid] = await nothrow(eos.buyRaw(rule[0].value, rule[1].value))
+    [error, txid] = await nothrow(eos.asyncBuyRaw(rule[0].value, rule[1].value))
     if (error != null) {
         logger.warn('Failed to buy raw, receiver: %s, ramBytes: %s, %s',
             rule[0].value, rule[1].value, error.message);

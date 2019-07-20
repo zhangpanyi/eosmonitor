@@ -16,7 +16,7 @@ class Poller {
         const limit = 100;
         let seq = latest.getSeq();
         while (true) {
-            let count = await this._pollActions(seq, limit);
+            let count = await this._asyncPollActions(seq, limit);
             let newseq = seq + count;
             if (newseq > seq) {
                 seq = newseq;
@@ -27,7 +27,7 @@ class Poller {
     }
 
     // 轮询Actions
-    async _pollActions(offset, limit) {
+    async _asyncPollActions(offset, limit) {
         // 获取actions
         let error, result;
         [error, result] = await nothrow(
@@ -60,7 +60,7 @@ class Poller {
             }
 
             let currency = utils.parseCurrency(act.data.quantity);
-            let token = await this.eos.getToken(currency.symbol);
+            let token = await this.eos.asyncGetToken(currency.symbol);
             if (token == null || act.account !== token.contract) {
                 continue;
             }
